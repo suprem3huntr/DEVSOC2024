@@ -45,6 +45,10 @@ public class firebaseAuthManager : MonoBehaviour
                 Debug.LogError("Could not resolve all Firebase dependencies: " + dependencyStatus);
             }
         });
+
+        passwordLoginField.contentType = TMP_InputField.ContentType.Password;
+        passwordRegisterField.contentType = TMP_InputField.ContentType.Password;
+        passwordRegisterVerifyField.contentType = TMP_InputField.ContentType.Password;
     }
 
     private void InitializeFirebase()
