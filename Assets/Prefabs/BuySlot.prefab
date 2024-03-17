@@ -628,6 +628,7 @@ GameObject:
   - component: {fileID: 6536450438579683521}
   - component: {fileID: 6018933054800467486}
   - component: {fileID: 4498078033098187057}
+  - component: {fileID: 6619578330687990378}
   m_Layer: 5
   m_Name: BuySlot
   m_TagString: Untagged
@@ -718,6 +719,20 @@ MonoBehaviour:
   character: {fileID: 8148578796030957339}
   troopType: {fileID: 3329064086036326980}
   troopFaction: {fileID: 7541747050781339514}
+  namebox: {fileID: 4967449100227101304}
+--- !u!114 &6619578330687990378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6795630821677190999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 685991603e94f7c44856f7299fe49cb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  display: {fileID: 4498078033098187057}
 --- !u!1 &7831741806082489637
 GameObject:
   m_ObjectHideFlags: 0

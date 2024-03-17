@@ -20,6 +20,8 @@ namespace DEVSOC2024
         TMP_Text troopType;
         [SerializeField]
         TMP_Text troopFaction;
+        [SerializeField]
+        TMP_Text namebox;
         public void UpdateDisplay(Card card)
         {
             cost.text = ""+card.template.cost;
@@ -27,6 +29,10 @@ namespace DEVSOC2024
             character.sprite = card.template.cardImage;
             troopType.text = card.template.type;
             troopFaction.text = card.template.faction;
+            description.text = card.template.description;
+            namebox.text = card.template.cardName;
         }
+
+
     }
 }

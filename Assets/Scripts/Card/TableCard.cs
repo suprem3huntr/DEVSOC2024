@@ -15,15 +15,21 @@ namespace DEVSOC2024
         CardDisplay display = null;
         [SerializeField]
         GameObject cardPrefab;
+        GameManager gameManager;
+        public int row;
 
         void Start()
         {
-            
+            gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
         }
         
         public void OnPointerClick(PointerEventData eventData)
         {
 
+            if(gameManager.currstate.currState == States.PlayState && transform.childCount == 0)
+            {
+                gameManager.PlaceCard(gameObject);
+            }
         }
 
         public void OnPointerEnter(PointerEventData eventData)

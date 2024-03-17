@@ -10,7 +10,7 @@ namespace DEVSOC2024
 
     void Awake()
     {
-        GameObject[] objs = GameObject.FindGameObjectsWithTag("PlayerManager");
+        GameObject[] objs = GameObject.FindGameObjectsWithTag("Data");
 
         if (objs.Length > 1)
         {

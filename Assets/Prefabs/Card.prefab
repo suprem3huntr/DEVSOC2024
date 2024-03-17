@@ -755,6 +755,7 @@ MonoBehaviour:
   character: {fileID: 2836557010068824357}
   troopType: {fileID: 112292605759808065}
   troopFaction: {fileID: 3795174628970196895}
+  namebox: {fileID: 6559110107847393373}
 --- !u!1 &7410283006661414150
 GameObject:
   m_ObjectHideFlags: 0

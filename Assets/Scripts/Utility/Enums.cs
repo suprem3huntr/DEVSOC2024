@@ -6,12 +6,10 @@ using UnityEngine;
 public enum States{
     IdleState,
     TargetState,
-    AttackState,
-    DrawState,
+    GameState,
     PlayState,
-    GuardState,
-    AttackTargetState,
 }
+
 
 public enum Holders{
     Resourceline,
