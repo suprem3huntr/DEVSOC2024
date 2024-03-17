@@ -5,10 +5,9 @@ using System.Linq;
 using System.Data.Common;
 using Unity.VisualScripting;
 
-
 namespace DEVSOC2024
 {
-    
+
     [CreateAssetMenu(fileName = "Card Database",menuName ="Cards/Database")]
     public class CardDatabase : SingletonSriptableObject<CardDatabase>
     {
