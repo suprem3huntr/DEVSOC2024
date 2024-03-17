@@ -17,6 +17,7 @@ namespace DEVSOC2024
         BuyPanel buyPanel;
         TableCard tableCard;
         List<List<Card>> decks = new List<List<Card>>();
+        List<int> resource = new List<int>();
         
         void Awake()
         {
@@ -83,26 +84,26 @@ namespace DEVSOC2024
         }
 
         [ServerRpc]
-        void ReducePowerServerRpc(int p, ServerRpcParams serverRpcParams = default)
+        void ReducePowerServerRpc(int power, ServerRpcParams serverRpcParams = default)
         {
-            tableCard.RedPower(p);
+            tableCard.RedPower(power);
         }
 
         [ServerRpc]
-        void IncreasePowerServerRpc(int p, ServerRpcParams serverRpcParams = default)
+        void IncreasePowerServerRpc(int power, ServerRpcParams serverRpcParams = default)
         {
-            tableCard.IncPower(p);
+            tableCard.IncPower(power);
         }
         [ServerRpc]
-        void ReduceResourceServerRpc(int p, ServerRpcParams serverRpcParams = default)
+        void ReduceResourceServerRpc(int player, int res, ServerRpcParams serverRpcParams = default)
         {
-            tableCard.RedResource(p);
+            resource[player] -= res;
         }
 
         [ServerRpc]
-        void IncreaseResourceServerRpc(int p, ServerRpcParams serverRpcParams = default)
+        void IncreaseResourceServerRpc(int player, int res, ServerRpcParams serverRpcParams = default)
         {
-            tableCard.IncResource(p);
+            resource[player] += res;
         }
 
         #endregion
