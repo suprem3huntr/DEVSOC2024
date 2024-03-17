@@ -49,6 +49,29 @@ namespace DEVSOC2024
             display.UpdateDisplay(card);
         }
 
+        public void RedPower(int p)
+        {
+            card.power-=p;
+        }
+
+        public void IncPower(int p)
+        {
+            card.power+=p;
+        }
+
+        public void RedResource(int p)
+        {
+            card.power-=p;
+        }
+
+        public void IncResource(int p)
+        {
+            card.power+=p;
+        }
+        public void DestroyCard()
+        {
+            Destroy(this);
+        }
         
     }
 }

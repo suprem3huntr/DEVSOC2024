@@ -14,12 +14,14 @@ namespace DEVSOC2024
         List<CardHolder> allHolders;
         public int numberOfHolders = 6; //0)Resourceline 1)Backline 2)Frontline
         int playerNumber;
+        BuyPanel buyPanel;
+        TableCard tableCard;
         List<List<Card>> decks = new List<List<Card>>();
         
         void Awake()
         {
             if(!IsServer) return;
-            for (int i=0; i<numberOfHolders;i++)
+            for (int i=0; i<numberOfHolders; i++)
             {
                 allHolders.Add(new CardHolder());
             }
@@ -62,10 +64,45 @@ namespace DEVSOC2024
         #region ServerRpcs
 
         [ServerRpc]
-        void AddToDeckServerRpc(Card card,ServerRpcParams serverRpcParams = default)
+        void AddToDeckServerRpc(Card card, ServerRpcParams serverRpcParams = default)
         {
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
             decks[clientId].Add(card);
+        }
+
+        [ServerRpc]
+        void SummonCardServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            buyPanel.setPanelActive();
+        }
+
+        [ServerRpc]
+        void DestroyCardServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            tableCard.DestroyCard();
+        }
+
+        [ServerRpc]
+        void ReducePowerServerRpc(int p, ServerRpcParams serverRpcParams = default)
+        {
+            tableCard.RedPower(p);
+        }
+
+        [ServerRpc]
+        void IncreasePowerServerRpc(int p, ServerRpcParams serverRpcParams = default)
+        {
+            tableCard.IncPower(p);
+        }
+        [ServerRpc]
+        void ReduceResourceServerRpc(int p, ServerRpcParams serverRpcParams = default)
+        {
+            tableCard.RedResource(p);
+        }
+
+        [ServerRpc]
+        void IncreaseResourceServerRpc(int p, ServerRpcParams serverRpcParams = default)
+        {
+            tableCard.IncResource(p);
         }
 
         #endregion
