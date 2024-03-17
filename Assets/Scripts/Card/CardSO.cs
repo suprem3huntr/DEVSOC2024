@@ -13,11 +13,10 @@ namespace DEVSOC2024
         public string cardName;
         public int cost;
         public int power;
-        public string characterDescription;
         public string description;
         public Sprite cardImage;
-        public Sprite cardNameplate;
-        public Sprite cardBackground;
+        public string faction;
+        public string type;
         public bool Ability;
         
 

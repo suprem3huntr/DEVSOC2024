@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,10 +8,16 @@ namespace DEVSOC2024
 {
     public class Card : INetworkSerializable
     {
-        CardSO template;
-        int power;
+        public CardSO template;
+        public int power;
+        public Card(int cardId)
+        {
+            template = CardDatabase.Singleton.GetCard(cardId);
+            power = template.power;
+        }
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
+            
             int cardId = -1;
             if(!serializer.IsReader)
             {
