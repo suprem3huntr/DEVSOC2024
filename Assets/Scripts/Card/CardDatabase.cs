@@ -19,7 +19,7 @@ namespace DEVSOC2024
             allCards = new List<CardSO>();
 
             var foundCards = Resources.LoadAll<CardSO>("Cards").OrderBy(i => i.id).ToList();
-            var hasIDinRange = foundCards.Where(i => i.id != -1 && i.id <foundCards.Count).OrderBy(i => i.id).ToList();
+            var hasIDinRange = foundCards.Where(i => i.id != -1 && i.id<foundCards.Count).OrderBy(i => i.id).ToList();
             var hasIDNotinRange = foundCards.Where(i => i.id != -1 && i.id >= foundCards.Count).OrderBy(i => i.id).ToList();
             var noID = foundCards.Where(i => i.id <= -1).OrderBy(i => i.id).ToList();
 
