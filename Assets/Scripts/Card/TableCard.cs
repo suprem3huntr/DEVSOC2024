@@ -12,13 +12,13 @@ namespace DEVSOC2024
     {
         [SerializeField]
         Card card = null;
-        CardDisplay display;
+        CardDisplay display = null;
         [SerializeField]
         GameObject cardPrefab;
 
         void Start()
         {
-            display = gameObject.GetComponent<CardDisplay>();
+            
         }
         
         public void OnPointerClick(PointerEventData eventData)

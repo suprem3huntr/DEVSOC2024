@@ -10,10 +10,15 @@ namespace DEVSOC2024
     {
         [SerializeField]
         TMP_Text cost;
+        [SerializeField]
         TMP_Text power;
+        [SerializeField]
         TMP_Text description;
+        [SerializeField]
         Image character;
+        [SerializeField]
         TMP_Text troopType;
+        [SerializeField]
         TMP_Text troopFaction;
         public void UpdateDisplay(Card card)
         {
