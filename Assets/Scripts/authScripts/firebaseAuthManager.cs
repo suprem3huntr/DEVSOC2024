@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Database;
 using TMPro;
 using System.Threading.Tasks;
 using DEVSOC2024;
+using System.Linq;
 
 public class firebaseAuthManager : MonoBehaviour
 {
@@ -29,6 +31,7 @@ public class firebaseAuthManager : MonoBehaviour
     public TMP_InputField passwordRegisterVerifyField;
     public TMP_Text warningRegisterText;
 
+    DatabaseReference dbReference;
 
     private void Awake()
     {
@@ -49,6 +52,7 @@ public class firebaseAuthManager : MonoBehaviour
         passwordLoginField.contentType = TMP_InputField.ContentType.Password;
         passwordRegisterField.contentType = TMP_InputField.ContentType.Password;
         passwordRegisterVerifyField.contentType = TMP_InputField.ContentType.Password;
+
     }
 
     private void InitializeFirebase()
@@ -56,6 +60,7 @@ public class firebaseAuthManager : MonoBehaviour
         Debug.Log("Setting up Firebase Auth");
         //Set the authentication instance object
         auth = FirebaseAuth.DefaultInstance;
+        dbReference = FirebaseDatabase.DefaultInstance.RootReference;
     }
 
     public void LoginButton()
@@ -113,6 +118,9 @@ public class firebaseAuthManager : MonoBehaviour
             Debug.LogFormat("User signed in successfully: {0} ({1})", User.DisplayName, User.Email);
             warningLoginText.text = "";
             confirmLoginText.text = "Logged In";
+            yield return new WaitForSeconds(2);
+            uiManager.instance.LobbyScreen();
+
         }
     }
 
