@@ -15,6 +15,7 @@ namespace DEVSOC2024
         public int power;
         public string description;
         public Sprite cardImage;
+        public Sprite cardBackground;
         public string faction;
         public string type;
         public bool Ability;

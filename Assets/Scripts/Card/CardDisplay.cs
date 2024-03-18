@@ -22,6 +22,8 @@ namespace DEVSOC2024
         TMP_Text troopFaction;
         [SerializeField]
         TMP_Text namebox;
+        [SerializeField]
+        Image background;
         public void UpdateDisplay(Card card)
         {
             cost.text = ""+card.template.cost;
@@ -31,6 +33,7 @@ namespace DEVSOC2024
             troopFaction.text = card.template.faction;
             description.text = card.template.description;
             namebox.text = card.template.cardName;
+            background.sprite = card.template.cardBackground;
         }
 
 
