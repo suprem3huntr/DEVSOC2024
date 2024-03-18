@@ -149,10 +149,7 @@ namespace DEVSOC2024
             ui.SetPlay();
         }
 
-        public void AddResource()
-        {
-            AddResourceServerRpc();
-        }
+        
         
 
         #endregion
@@ -244,23 +241,7 @@ namespace DEVSOC2024
             UpdateResourcesClientRpc(playerResources[turn%2],clientRpcParams);
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void AddResourceServerRpc(ServerRpcParams serverRpcParams = default)
-        {
-            int clientId = (int)serverRpcParams.Receive.SenderClientId;
-            
-            
-            playerResources[clientId] -= 2;
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new ulong[]{(ulong)clientId}
-                }
-            };
-            UpdateResourcesClientRpc(playerResources[clientId],clientRpcParams);
-
-        }
+        
 
         
 
