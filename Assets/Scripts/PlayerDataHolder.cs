@@ -1,12 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace DEVSOC2024
 {
     public class PlayerDataHolder : MonoBehaviour
     {
         public List<int> deck = new List<int>();
+        public List<int> unlockedCards = new List<int>();
 
         void Awake()
         {
@@ -45,6 +48,32 @@ namespace DEVSOC2024
                 
             
 
+        }
+
+        public void SetDefaultCards()
+        {
+            for(int i = 0; i < 10; i++)
+            {
+                this.deck.Add(i);
+                this.unlockedCards.Add(i);
+            }
+        }
+
+        public string ConvertCardDataToString()
+        {
+            string str = "UnlockedCards: ";
+            for(int i = 0; i < unlockedCards.Count; i++)
+            {
+                str += unlockedCards.ElementAt(i).ToString() + " ";
+                
+            }
+            str += "Deck: ";
+            for(int i = 0; i < deck.Count; i++)
+            {
+                str += deck.ElementAt(i).ToString() + " ";
+            }
+
+            return str;
         }
         
     }

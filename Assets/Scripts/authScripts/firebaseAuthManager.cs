@@ -257,9 +257,11 @@ public class firebaseAuthManager : MonoBehaviour
         }
     }
 
-    private IEnumerator UpdateCardDataDatabase(DefaultPlayerCardData obj)
+    private IEnumerator UpdateCardDataDatabase()
     {
-        Task DBTask = dbReference.Child("users").Child(User.UserId).Child("CardData").SetValueAsync(obj.ToString());
+        PlayerDataHolder plr = GameObject.FindGameObjectWithTag("Data").GetComponent<PlayerDataHolder>();
+        plr.SetDefaultCards();
+        Task DBTask = dbReference.Child("users").Child(User.UserId).Child("CardData").SetValueAsync(plr.ConvertCardDataToString());
 
         yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
 
@@ -277,7 +279,7 @@ public class firebaseAuthManager : MonoBehaviour
     {
         StartCoroutine(UpdateUsernameAuth(usernameRegisterField.text));
         StartCoroutine(UpdateUsernameDatabase(usernameRegisterField.text));
-        StartCoroutine(UpdateCardDataDatabase(new DefaultPlayerCardData()));
+        StartCoroutine(UpdateCardDataDatabase());     
     }
 
 }
