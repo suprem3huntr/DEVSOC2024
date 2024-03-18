@@ -24,7 +24,7 @@ namespace DEVSOC2024
             
             if(gameManager.currstate.currState == States.GameState && gameManager.getResource() >= card.template.cost)
             {
-
+                
                 transform.parent.gameObject.SetActive(false);
                 gameManager.setPlayCard(card);
                 gameManager.SetPlay();
