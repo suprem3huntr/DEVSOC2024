@@ -18,6 +18,7 @@ namespace DEVSOC2024
         List<List<Card>> decks = new List<List<Card>>();
         
         NetworkList<int> playerResources = new NetworkList<int>();
+        
         public State currstate;
         IdleState idle = new IdleState();
         GameState game = new GameState();
