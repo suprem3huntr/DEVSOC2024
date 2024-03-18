@@ -21,7 +21,7 @@ namespace DEVSOC2024
         int turn = 0;
         NetworkList<int> playerResources = new NetworkList<int>();
         List<int> playerScores = new List<int>();
-
+        [SerializeField]
         public State currstate;
         IdleState idle = new IdleState();
         GameState game = new GameState();
@@ -93,9 +93,13 @@ namespace DEVSOC2024
         #region Public Functions
         public void PlaceCard(GameObject location)
         {
+            Debug.Log(playCard.template.id);
             TableCard target = location.GetComponent<TableCard>();
+            
             PlayCardServerRpc(playCard,target.row,location.transform.GetSiblingIndex());
             SetGame();
+            
+            
         }
 
         public void setPlayCard(Card card)
@@ -355,6 +359,7 @@ namespace DEVSOC2024
             }
             else
             {
+                Debug.Log("Game");
                 SetGame();
                 
             }
@@ -414,6 +419,7 @@ namespace DEVSOC2024
         [ClientRpc]
         void SummonAbilityClientRpc(Card card, ClientRpcParams clientRpcParams = default)
         {
+            Debug.Log("summoning "+ card.template.abilityValue);
             setPlayCard(new Card(card.template.abilityValue));
             SetPlay();
         }

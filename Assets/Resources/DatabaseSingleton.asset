@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f2a84e589f5ae0429d3518e8922c6c1, type: 3}
   m_Name: DatabaseSingleton
   m_EditorClassIdentifier: 
-  allCards: []
+  allCards:
+  - {fileID: 11400000, guid: d1948cfa61a556f449f6978b18c11ccf, type: 2}
+  - {fileID: 11400000, guid: 03b313b8479d10843b1722a023e6e727, type: 2}
+  - {fileID: 11400000, guid: 4aa50022ea5d9764aa22072079c71129, type: 2}
+  - {fileID: 11400000, guid: ef2ce45f78c6b7748af16aeed454833f, type: 2}
