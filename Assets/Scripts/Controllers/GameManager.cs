@@ -119,7 +119,7 @@ namespace DEVSOC2024
             TableCard target = location.GetComponent<TableCard>();
             if(currentAction == CurrentAction.RedPower)
             {
-                RedPowerServerRpc(target.target.template.abilityValue, target.row, location.transform.GetSiblingIndex(), ServerRpcParams);
+                RedPowerServerRpc(target.target.template.abilityValue, target.row, location.transform.GetSiblingIndex());
             }
         }
 
@@ -282,6 +282,7 @@ namespace DEVSOC2024
 
         }
 
+        [ServerRpc(RequireOwnership = false)]
         void RedPowerServerRpc(int abilityValue, int row, int column, ServerRpcParams serverRpcParams = default)
         {
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
@@ -289,11 +290,12 @@ namespace DEVSOC2024
             allHolders[newRow][column].power -= abilityValue;
         }
         
+        [ServerRpc(RequireOwnership = false)]
         void DestroyServerRpc(int abilityValue, int row, int column, ServerRpcParams serverRpcParams = default)
         {
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
             int newRow = (row + clientId * 2)%4;
-            allHolders[newRow][column];
+            //allHolders[newRow][column];
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -409,6 +411,26 @@ namespace DEVSOC2024
             }
         }
 
+        [ClientRpc]
+        void SummonAbilityClientRpc(Card card, ClientRpcParams clientRpcParams = default)
+        {
+            setPlayCard(new Card(card.template.abilityValue));
+            SetPlay();
+        }
+
+        [ClientRpc]
+        void DestroyAbilityClientRpc(Card card, ClientRpcParams clientRpcParams = default)
+        {
+            currentAction = CurrentAction.Destroy;
+            SetTarget();
+        }
+
+        [ClientRpc]
+        void RedPowerAbilityClientRpc(Card card, ClientRpcParams clientRpcParams = default)
+        {
+            currentAction = CurrentAction.RedPower;
+            SetTarget();
+        }
 
 
         #endregion
