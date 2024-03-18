@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace DEVSOC2024
@@ -15,6 +16,14 @@ namespace DEVSOC2024
         Transform BuyPanel;
         [SerializeField]
         GameObject buySlot;
+        [SerializeField]
+        GameObject endTurn;
+        [SerializeField]
+        TMP_Text playerScore;
+        [SerializeField]
+        TMP_Text enemyScore;
+        [SerializeField]
+        TMP_Text resources;
         public void setPlayerNumber(int pno)
         {
             playerNumber = pno;
@@ -27,6 +36,14 @@ namespace DEVSOC2024
         {
             cancelButton.SetActive(false);
         }
+        public void removeEnd()
+        {
+            endTurn.SetActive(false);
+        }
+        public void setEnd()
+        {
+            endTurn.SetActive(true);
+        }
         public void PlayCard(Card card,int row,int column)
         {
             rows[row].transform.GetChild(column).GetComponent<TableCard>().setCard(card);
@@ -36,6 +53,16 @@ namespace DEVSOC2024
             
             GameObject newCard = Instantiate(buySlot,BuyPanel);
             newCard.GetComponent<BuySlot>().setCard(card);
+        }
+
+        public void UpdateScores(int player,int enemy)
+        {
+            playerScore.text = "" + player;;
+            enemyScore.text = "" + enemy;
+        }
+        public void UpdateResources(int resourceAmt)
+        {
+            resources.text = ""+resourceAmt;
         }
     }
 }

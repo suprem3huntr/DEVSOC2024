@@ -14,7 +14,11 @@ namespace DEVSOC2024
         }
         public void Scene()
         {
-            NetworkManager.SceneManager.LoadScene("GautamProtoype",UnityEngine.SceneManagement.LoadSceneMode.Single);
+            NetworkManager.SceneManager.LoadScene("GameScene",UnityEngine.SceneManagement.LoadSceneMode.Single);
+        }
+        public void Client()
+        {
+            NetworkManager.Singleton.StartClient();
         }
     }
 }
