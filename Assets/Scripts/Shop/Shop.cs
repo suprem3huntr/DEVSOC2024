@@ -14,7 +14,10 @@ namespace DEVSOC2024
             BuyPanel.SetActive(true);
         }
         
-
+        public void setPanelActive()
+        {
+            BuyPanel.SetActive(true);
+        }
         
     }
 }

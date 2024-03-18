@@ -17,3 +17,21 @@ public enum Holders{
     Backline,
     
 }
+
+public enum Abilities{
+    Summon,
+    Destroy,
+    RedPower,
+    IncPower,
+    RedResource,
+    IncResource,
+    SummonOpp,
+    GenerateResource,
+
+}
+
+public enum CurrentAction{
+    None,
+    RedPower,
+    Destroy,
+}
