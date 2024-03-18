@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace DEVSOC2024
@@ -25,6 +26,12 @@ namespace DEVSOC2024
         void Update()
         {
         
+        }
+
+        public void StartGame()
+        {
+            
+            scenesController.StartGame();
         }
     }
 }

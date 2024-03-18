@@ -89,5 +89,10 @@ namespace DEVSOC2024
                 Debug.LogError(e);
             }
         }
+
+        public void StartGame()
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("GameScene",LoadSceneMode.Single);
+        }
     }
 }
