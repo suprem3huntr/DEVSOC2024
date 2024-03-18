@@ -11,7 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestLobby.unity
     guid: 33bb32685a1231b4bbe48178bcaad492
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/GautamProtoype.unity
     guid: e0aab7c487985df4f87e4235be2fb8f4
+  - enabled: 1
+    path: Assets/Scenes/GameScene.unity
+    guid: 5389c67fc95ce8d4cb208822e7a997bf
   m_configObjects: {}

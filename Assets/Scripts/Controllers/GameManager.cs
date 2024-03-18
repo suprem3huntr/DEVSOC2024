@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DEVSOC2024.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace DEVSOC2024
         List<List<Card>> decks = new List<List<Card>>();
         
         NetworkList<int> playerResources = new NetworkList<int>();
-        
+        List<int> playerScores = new List<int>();
         public State currstate;
         IdleState idle = new IdleState();
         GameState game = new GameState();
@@ -68,8 +69,10 @@ namespace DEVSOC2024
             if(!IsServer) return;
             playerResources.Add(10);
             playerResources.Add(10);
-
-            int starter = Random.Range(0,2);
+            playerScores.Add(0);
+            playerScores.Add(0);
+            int starter = UnityEngine.Random.Range(0,2);
+            Debug.Log("Starter "+starter);
             ClientRpcParams clientRpcParams = new ClientRpcParams
             {
                 Send = new ClientRpcSendParams
@@ -112,6 +115,8 @@ namespace DEVSOC2024
             EndTurnServerRpc();
         }
         #endregion
+
+        
 
         #region State Switchers
 
@@ -157,6 +162,16 @@ namespace DEVSOC2024
             }
         }
 
+        
+
+        private void UpdateScoresValue()
+        {
+            
+            playerScores[0] = allHolders.Take(2).Sum(holder => holder.Sum(card => card.power));
+            playerScores[1] = allHolders.Skip(2).Sum(holder => holder.Sum(card => card.power));
+        }
+
+
         #endregion
 
         #region ServerRpcs
@@ -183,6 +198,18 @@ namespace DEVSOC2024
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
             allHolders[(row + clientId * 2)%4][column] = card;
             PlayCardUIClientRpc(card,row,column,clientId);
+            playerResources[clientId] -= card.template.cost;
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[]{(ulong)clientId}
+                }
+            };
+            UpdateResourcesClientRpc(playerResources[clientId],clientRpcParams);
+            UpdateScoresValue();
+            UpdateScoresClientRpc(playerScores[1],playerScores[0]);
+            
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -227,6 +254,25 @@ namespace DEVSOC2024
                 currstate = game;
                 
             }
+        }
+
+        [ClientRpc]
+        void UpdateScoresClientRpc(int enemyScore,int playerScore)
+        {
+            if(playerNumber==0)
+            {
+                ui.UpdateScores(playerScore,enemyScore);
+            }
+            else
+            {
+                ui.UpdateScores(enemyScore,playerScore);
+            }
+        }
+
+        [ClientRpc]
+        void UpdateResourcesClientRpc(int resource,ClientRpcParams clientRpcParams)
+        {
+            ui.UpdateResources(resource);
         }
 
         #endregion
