@@ -22,8 +22,9 @@ namespace DEVSOC2024
         }
         public Card()
         {
-
+            
         }
+
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             

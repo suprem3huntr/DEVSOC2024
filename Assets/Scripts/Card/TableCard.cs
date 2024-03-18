@@ -16,6 +16,7 @@ namespace DEVSOC2024
         GameObject cardPrefab;
         GameManager gameManager;
         public int row;
+        public Card target;
 
         void Start()
         {
@@ -27,7 +28,14 @@ namespace DEVSOC2024
 
             if(gameManager.currstate.currState == States.PlayState && transform.childCount == 0)
             {
-                gameManager.PlaceCard(gameObject);
+                if(row<2 || gameManager.playCard.template.abilities == Abilities.SummonOpp)
+                {
+                    gameManager.PlaceCard(gameObject);
+                }
+            }
+            if(gameManager.currstate.currState == States.TargetState && transform.childCount != 0)
+            {
+                target = card;
             }
         }
 
@@ -53,20 +61,5 @@ namespace DEVSOC2024
             card = cardInp;
             display.UpdateDisplay(card);
         }
-
-        public void RedPower(int p)
-        {
-            card.power-=p;
-        }
-
-        public void IncPower(int p)
-        {
-            card.power+=p;
-        }
-        public void DestroyCard()
-        {
-            Destroy(this);
-        }
-        
     }
 }

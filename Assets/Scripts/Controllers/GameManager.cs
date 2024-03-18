@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using DEVSOC2024.Utilities;
 using Unity.Netcode;
@@ -27,6 +28,7 @@ namespace DEVSOC2024
         PlayState play = new PlayState();
         TargetState target = new TargetState();
         public Card playCard;
+        CurrentAction currentAction = CurrentAction.None;
         
         void Awake()
         {
@@ -86,14 +88,9 @@ namespace DEVSOC2024
             
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
+
 
         #region Public Functions
-
         public void PlaceCard(GameObject location)
         {
             TableCard target = location.GetComponent<TableCard>();
@@ -116,12 +113,75 @@ namespace DEVSOC2024
         {
             EndTurnServerRpc();
         }
+
+        public void completeAction(GameManager location)
+        {
+            TableCard target = location.GetComponent<TableCard>();
+            if(currentAction == CurrentAction.RedPower)
+            {
+                RedPowerServerRpc(target.target.template.abilityValue, target.row, location.transform.GetSiblingIndex(), ServerRpcParams);
+            }
+        }
+
+        public void checkAbility(Card card, int clientId, int row = -1, int column = -1)
+        {
+            if(card.template.ability){
+                ClientRpcParams clientRpcParams = new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new ulong[]{(ulong)clientId}
+                    }
+                };
+
+                if(card.template.abilities == Abilities.Summon){
+                    SummonAbilityClientRpc(card, clientRpcParams);
+                }
+                else if(card.template.abilities == Abilities.Destroy){
+                    DestroyAbilityClientRpc(card, clientRpcParams);
+                }
+                else if(card.template.abilities == Abilities.RedPower){
+                    RedPowerAbilityClientRpc(card, clientRpcParams);                    
+                }
+                else if(card.template.abilities == Abilities.IncPower){
+                    if(allHolders[row][column-1] != null || column>0)
+                    {
+                        allHolders[row][column-1].template.power += playCard.template.abilityValue;
+                    }
+                    if(allHolders[row][column+1] != null || column<5)
+                    {
+                        allHolders[row][column+1].template.power += playCard.template.abilityValue;
+                    }
+                    UpdateScoresValue();
+                    UpdateScoresClientRpc(playerScores[1],playerScores[0]);
+                }
+                else if(card.template.abilities == Abilities.RedResource){
+                    playerResources[(playerNumber==1)?0:1] -= playCard.template.abilityValue;
+                    UpdateResourcesClientRpc(playerResources[clientId],clientRpcParams);
+                }
+                else if(card.template.abilities == Abilities.IncResource){
+                    playerResources[(playerNumber==1)?0:1] += playCard.template.abilityValue;
+                    UpdateResourcesClientRpc(playerResources[clientId],clientRpcParams);
+                }
+                else if(card.template.abilities == Abilities.SummonOpp){
+                    if(allHolders[row][column-1] != null || column>0)
+                    {
+                        allHolders[row][column-1].template.power -= playCard.template.abilityValue;
+                    }
+                    if(allHolders[row][column+1] != null || column<5)
+                    {
+                        allHolders[row][column+1].template.power -= playCard.template.abilityValue;
+                    }
+                    UpdateScoresValue();
+                    UpdateScoresClientRpc(playerScores[1],playerScores[0]);
+                }
+            }
+        }
         #endregion
 
         
 
         #region State Switchers
-
         public void SetIdle()
         {
             currstate = idle;
@@ -154,8 +214,9 @@ namespace DEVSOC2024
 
         #endregion
 
-        #region Self Functions
 
+
+        #region Self Functions
         private void formDeck()
         {
             List<int> deck = playerDataHolder.deck;
@@ -165,8 +226,6 @@ namespace DEVSOC2024
                 AddToDeckServerRpc(card);
             }
         }
-
-        
 
         private void UpdateScoresValue()
         {
@@ -182,8 +241,9 @@ namespace DEVSOC2024
 
         #endregion
 
-        #region ServerRpcs
 
+
+        #region ServerRpcs
         [ServerRpc(RequireOwnership = false)]
         void AddToDeckServerRpc(Card card,ServerRpcParams serverRpcParams = default)
         {
@@ -204,7 +264,8 @@ namespace DEVSOC2024
         void PlayCardServerRpc(Card card,int row,int column,ServerRpcParams serverRpcParams = default)
         {
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
-            allHolders[(row + clientId * 2)%4][column] = card;
+            int newRow = (row + clientId * 2)%4;
+            allHolders[newRow][column] = card;
             PlayCardUIClientRpc(card,row,column,clientId);
             playerResources[clientId] -= card.template.cost;
             ClientRpcParams clientRpcParams = new ClientRpcParams
@@ -217,7 +278,22 @@ namespace DEVSOC2024
             UpdateResourcesClientRpc(playerResources[clientId],clientRpcParams);
             UpdateScoresValue();
             UpdateScoresClientRpc(playerScores[1],playerScores[0]);
-            
+            checkAbility(card, clientId, newRow, column);
+
+        }
+
+        void RedPowerServerRpc(int abilityValue, int row, int column, ServerRpcParams serverRpcParams = default)
+        {
+            int clientId = (int)serverRpcParams.Receive.SenderClientId;
+            int newRow = (row + clientId * 2)%4;
+            allHolders[newRow][column].power -= abilityValue;
+        }
+        
+        void DestroyServerRpc(int abilityValue, int row, int column, ServerRpcParams serverRpcParams = default)
+        {
+            int clientId = (int)serverRpcParams.Receive.SenderClientId;
+            int newRow = (row + clientId * 2)%4;
+            allHolders[newRow][column];
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -247,8 +323,9 @@ namespace DEVSOC2024
 
         #endregion
 
-        #region ClientRpcs
 
+
+        #region ClientRpcs
         [ClientRpc]
         void PlayCardUIClientRpc(Card card,int row,int column,int player)
         {
@@ -295,7 +372,7 @@ namespace DEVSOC2024
         }
 
         [ClientRpc]
-        void UpdateResourcesClientRpc(int resource,ClientRpcParams clientRpcParams)
+        void UpdateResourcesClientRpc(int resource,ClientRpcParams clientRpcParams = default)
         {
             ui.UpdateResources(resource);
         }

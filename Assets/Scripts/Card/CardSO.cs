@@ -18,7 +18,11 @@ namespace DEVSOC2024
         public Sprite cardBackground;
         public string faction;
         public string type;
-        public bool Ability;
+        public bool ability;
+
+        public Abilities abilities;
+
+        public int abilityValue;
         
 
         
