@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ using TMPro;
 using System.Threading.Tasks;
 using DEVSOC2024;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class firebaseAuthManager : MonoBehaviour
 {
@@ -132,6 +134,7 @@ public class firebaseAuthManager : MonoBehaviour
             warningLoginText.text = "";
             confirmLoginText.text = "Logged In";
             yield return new WaitForSeconds(2);
+            loadData();
             uiManager.instance.LobbyScreen();
 
         }
@@ -280,6 +283,74 @@ public class firebaseAuthManager : MonoBehaviour
         StartCoroutine(UpdateUsernameAuth(usernameRegisterField.text));
         StartCoroutine(UpdateUsernameDatabase(usernameRegisterField.text));
         StartCoroutine(UpdateCardDataDatabase());     
+    }
+    public static void ParseStringToLists(string data, out List<int> unlockedCardsList, out List<int> deckList)
+    {
+        unlockedCardsList = new List<int>();
+        deckList = new List<int>();
+
+        string[] parts = data.Split(':');
+        if (parts.Length != 2)
+        {
+            throw new ArgumentException("Invalid data format");
+        }
+
+        string unlockedCardsPart = parts[0];
+        string deckPart = parts[1];
+
+        AddNumbersToList(unlockedCardsPart, unlockedCardsList);
+        AddNumbersToList(deckPart, deckList);
+    }
+
+    public static void AddNumbersToList(string input, List<int> list)
+    {
+        string[] numbers = input.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string number in numbers)
+        {
+            if (int.TryParse(number, out int num))
+            {
+                list.Add(num);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid number format: {number}");
+            }
+        }
+    }
+
+    public void loadData()
+    {
+        Task<DataSnapshot> DBTask = dbReference.Child("users").Child(User.UserId).GetValueAsync();
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else if (DBTask.Result.Value == null)
+        {
+            //No data exists yet
+            PlayerDataHolder plr = GameObject.FindGameObjectWithTag("Data").GetComponent<PlayerDataHolder>();
+            plr.SetDefaultCards();
+            string cardsData = plr.ConvertCardDataToString();
+            ParseStringToLists(cardsData,out plr.unlockedCards,out plr.deck);
+
+        }
+        else
+        {
+            //Data has been retrieved
+            PlayerDataHolder plr = GameObject.FindGameObjectWithTag("Data").GetComponent<PlayerDataHolder>();
+            DataSnapshot snapshot = DBTask.Result;
+            string userCardData = snapshot.Child("CardData").Value.ToString();
+            ParseStringToLists(userCardData, out plr.unlockedCards, out plr.deck);
+            Debug.Log("Unlocked Cards:\n");
+            for(int i = 0; i < plr.unlockedCards.Count; i++)
+            {
+                Debug.Log(plr.unlockedCards.ElementAt(i));
+            }
+            
+
+            
+        }
     }
 
 }

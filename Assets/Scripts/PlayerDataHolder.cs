@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 namespace DEVSOC2024
 {
@@ -57,6 +58,14 @@ namespace DEVSOC2024
                 this.deck.Add(i);
                 this.unlockedCards.Add(i);
             }
+        }
+
+        public void SetCards(List<int> dbCards, List<int> dbDeck)
+        {
+            this.deck.Clear();
+            this.deck = new List<int>(dbDeck);
+            this.unlockedCards.Clear();
+            this.unlockedCards = new List<int>(dbCards);
         }
 
         public string ConvertCardDataToString()
