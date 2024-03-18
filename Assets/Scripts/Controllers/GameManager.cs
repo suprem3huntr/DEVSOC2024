@@ -17,9 +17,10 @@ namespace DEVSOC2024
         public int numberOfHolders = 4;// 0)Backline 1)Frontline
         int playerNumber;
         List<List<Card>> decks = new List<List<Card>>();
-        
+        int turn = 0;
         NetworkList<int> playerResources = new NetworkList<int>();
         List<int> playerScores = new List<int>();
+
         public State currstate;
         IdleState idle = new IdleState();
         GameState game = new GameState();
@@ -29,8 +30,9 @@ namespace DEVSOC2024
         
         void Awake()
         {
-            
-            currstate = idle;
+            ui = gameObject.GetComponent<UIManager>();
+            ui.setPlayerNumber(playerNumber);   
+            SetIdle();
             
             
         }
@@ -58,8 +60,7 @@ namespace DEVSOC2024
             Debug.Log(decks.Count);
 
             playerNumber = (int) NetworkManager.Singleton.LocalClientId;
-            ui = gameObject.GetComponent<UIManager>();
-            ui.setPlayerNumber(playerNumber);
+            
             dataHolder = GameObject.FindGameObjectWithTag("Data");
             playerDataHolder = dataHolder.GetComponent<PlayerDataHolder>();
 
@@ -69,6 +70,7 @@ namespace DEVSOC2024
             if(!IsServer) return;
             playerResources.Add(10);
             playerResources.Add(10);
+
             playerScores.Add(0);
             playerScores.Add(0);
             int starter = UnityEngine.Random.Range(0,2);
@@ -123,7 +125,7 @@ namespace DEVSOC2024
         public void SetIdle()
         {
             currstate = idle;
-            ui.setEnd();
+            ui.removeEnd();
         }
 
         public void SetGame()
@@ -145,6 +147,11 @@ namespace DEVSOC2024
             currstate = play;
             ui.removeEnd();
             ui.SetPlay();
+        }
+
+        public void AddResource()
+        {
+            AddResourceServerRpc();
         }
         
 
@@ -171,6 +178,10 @@ namespace DEVSOC2024
             playerScores[1] = allHolders.Skip(2).Sum(holder => holder.Sum(card => card.power));
         }
 
+        private void endGame()
+        {
+            endGameClientRPC(playerScores[0],playerScores[1]);
+        }
 
         #endregion
 
@@ -215,7 +226,40 @@ namespace DEVSOC2024
         [ServerRpc(RequireOwnership = false)]
         void EndTurnServerRpc()
         {
+            turn++;
+            if(turn == 10)
+            {
+                endGame();
+                return;
+            }
+
             EndTurnClientRpc();
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[]{(ulong)(turn%2)}
+                }
+            };
+            UpdateResourcesClientRpc(playerResources[turn%2],clientRpcParams);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void AddResourceServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            int clientId = (int)serverRpcParams.Receive.SenderClientId;
+            
+            
+            playerResources[clientId] -= 2;
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[]{(ulong)clientId}
+                }
+            };
+            UpdateResourcesClientRpc(playerResources[clientId],clientRpcParams);
+
         }
 
         
@@ -246,12 +290,12 @@ namespace DEVSOC2024
         {
             if(currstate.currState != States.IdleState)
             {
-                currstate = idle;
+                SetIdle();
                 
             }
             else
             {
-                currstate = game;
+                SetGame();
                 
             }
         }
@@ -274,6 +318,40 @@ namespace DEVSOC2024
         {
             ui.UpdateResources(resource);
         }
+
+        [ClientRpc]
+        void endGameClientRPC(int player0,int player1)
+        {
+            SetIdle();
+            if(player0==player1)
+            {
+                ui.Tie();
+            }
+            else if(playerNumber == 0)
+            {
+                if(player0 > player1)
+                {
+                    ui.Win();
+                }
+                else
+                {
+                    ui.Lose();
+                }
+            }
+            else
+            {
+                if(player0 < player1)
+                {
+                    ui.Win();
+                }
+                else
+                {
+                    ui.Lose();
+                }
+            }
+        }
+
+
 
         #endregion
     }

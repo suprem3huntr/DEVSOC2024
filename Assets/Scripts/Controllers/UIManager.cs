@@ -64,5 +64,22 @@ namespace DEVSOC2024
         {
             resources.text = ""+resourceAmt;
         }
+
+        public void Win()
+        {
+            Debug.Log("win");
+        }
+
+        public void Tie()
+        {
+            Debug.Log("tie");
+        }
+
+        public void Lose()
+        {
+            Debug.Log("lose");
+        }
+
+
     }
 }
