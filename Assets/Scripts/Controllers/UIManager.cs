@@ -15,6 +15,8 @@ namespace DEVSOC2024
         Transform BuyPanel;
         [SerializeField]
         GameObject buySlot;
+        [SerializeField]
+        GameObject endTurn;
         public void setPlayerNumber(int pno)
         {
             playerNumber = pno;
@@ -26,6 +28,14 @@ namespace DEVSOC2024
         public void removeCancel()
         {
             cancelButton.SetActive(false);
+        }
+        public void removeEnd()
+        {
+            endTurn.SetActive(false);
+        }
+        public void setEnd()
+        {
+            endTurn.SetActive(true);
         }
         public void PlayCard(Card card,int row,int column)
         {

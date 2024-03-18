@@ -16,6 +16,8 @@ namespace DEVSOC2024
         public int numberOfHolders = 4;// 0)Backline 1)Frontline
         int playerNumber;
         List<List<Card>> decks = new List<List<Card>>();
+        
+        NetworkList<int> playerResources = new NetworkList<int>();
         public State currstate;
         IdleState idle = new IdleState();
         GameState game = new GameState();
@@ -26,7 +28,7 @@ namespace DEVSOC2024
         void Awake()
         {
             
-            
+            currstate = idle;
             
             
         }
@@ -48,6 +50,7 @@ namespace DEVSOC2024
                 }
                 
             }
+            
             decks.Add(new List<Card>());
             decks.Add(new List<Card>());
             Debug.Log(decks.Count);
@@ -60,6 +63,21 @@ namespace DEVSOC2024
 
 
             formDeck();
+
+            if(!IsServer) return;
+            playerResources.Add(10);
+            playerResources.Add(10);
+
+            int starter = Random.Range(0,2);
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[]{(ulong)starter}
+                }
+            };
+            EndTurnClientRpc(clientRpcParams);
+            
         }
 
         // Update is called once per frame
@@ -80,9 +98,18 @@ namespace DEVSOC2024
         public void setPlayCard(Card card)
         {
             playCard = card;
-            Debug.Log(playCard);
+            
         }
 
+        public int getResource()
+        {
+            return playerResources[playerNumber];
+        }
+
+        public void EndTurn()
+        {
+            EndTurnServerRpc();
+        }
         #endregion
 
         #region State Switchers
@@ -90,6 +117,7 @@ namespace DEVSOC2024
         public void SetIdle()
         {
             currstate = idle;
+            ui.setEnd();
         }
 
         public void SetGame()
@@ -97,18 +125,22 @@ namespace DEVSOC2024
             currstate = game;
             playCard = null;
             ui.removeCancel();
+            ui.setEnd();
         }
 
         public void SetTarget()
         {
             currstate = target;
+            ui.removeEnd();
         }
 
         public void SetPlay()
         {
             currstate = play;
+            ui.removeEnd();
             ui.SetPlay();
         }
+        
 
         #endregion
 
@@ -128,7 +160,7 @@ namespace DEVSOC2024
 
         #region ServerRpcs
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         void AddToDeckServerRpc(Card card,ServerRpcParams serverRpcParams = default)
         {
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
@@ -144,13 +176,21 @@ namespace DEVSOC2024
             
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         void PlayCardServerRpc(Card card,int row,int column,ServerRpcParams serverRpcParams = default)
         {
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
             allHolders[(row + clientId * 2)%4][column] = card;
             PlayCardUIClientRpc(card,row,column,clientId);
         }
+
+        [ServerRpc(RequireOwnership = false)]
+        void EndTurnServerRpc()
+        {
+            EndTurnClientRpc();
+        }
+
+        
 
         #endregion
 
@@ -171,6 +211,21 @@ namespace DEVSOC2024
         void UIAddtoShopClientRpc(Card card,ClientRpcParams clientRpcParams = default)
         {
             ui.addToShop(card);
+        }
+
+        [ClientRpc]
+        void EndTurnClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            if(currstate.currState != States.IdleState)
+            {
+                currstate = idle;
+                
+            }
+            else
+            {
+                currstate = game;
+                
+            }
         }
 
         #endregion
