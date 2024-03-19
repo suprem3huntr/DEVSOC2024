@@ -65,6 +65,12 @@ namespace DEVSOC2024
             resources.text = ""+resourceAmt;
         }
 
+        public void UpdateCard(Card card,int row,int column)
+        {
+            Debug.Log(row+" "+column);
+            rows[row].GetChild(column).GetComponent<TableCard>().UpdateCard(card);
+        }
+
         public void Win()
         {
             Debug.Log("win");

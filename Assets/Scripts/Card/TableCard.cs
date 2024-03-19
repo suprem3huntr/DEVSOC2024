@@ -11,7 +11,8 @@ namespace DEVSOC2024
     {
         [SerializeField]
         Card card = null;
-        CardDisplay display = null;
+        [SerializeField]
+        CardDisplay display;
         [SerializeField]
         GameObject cardPrefab;
         GameManager gameManager;
@@ -58,7 +59,9 @@ namespace DEVSOC2024
 
         public void UpdateCard(Card cardInp)
         {
+            Debug.Log(card);
             card = cardInp;
+            
             display.UpdateDisplay(card);
         }
     }

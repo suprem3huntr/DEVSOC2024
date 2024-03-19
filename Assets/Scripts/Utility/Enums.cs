@@ -26,7 +26,7 @@ public enum Abilities{
     RedResource,
     IncResource,
     SummonOpp,
-    GenerateResource,
+    
 
 }
 

@@ -10,7 +10,7 @@ namespace DEVSOC2024
 
     public class Card : INetworkSerializable
     {
-        public CardSO template;
+        public CardSO template = null;
         public int power;
         int cardId;
         public Card(int cardIdinp)
@@ -22,7 +22,7 @@ namespace DEVSOC2024
         }
         public Card()
         {
-            
+            template = null;
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter

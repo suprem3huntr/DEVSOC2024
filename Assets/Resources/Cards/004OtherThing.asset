@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cef05e3456be91845a021a89d17eb519, type: 3}
-  m_Name: 000Hitler
+  m_Name: 004OtherThing
   m_EditorClassIdentifier: 
-  id: 0
-  cardName: Hitler
-  cost: 7
-  power: 7
-  description: Toothbrush
+  id: 4
+  cardName: Other
+  cost: 1
+  power: 1
+  description: Lose ur money
   cardImage: {fileID: 0}
   cardBackground: {fileID: 21300000, guid: cb3491ec727520642ae4529a5261568a, type: 3}
   faction: Axis
-  type: Persona
+  type: Troop
   ability: 1
-  abilities: 5
-  abilityValue: 2
+  abilities: 4
+  abilityValue: 1

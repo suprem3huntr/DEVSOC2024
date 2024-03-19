@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using DEVSOC2024.Utilities;
 using Unity.Netcode;
+using Unity.Properties;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.Rendering;
 
 namespace DEVSOC2024
 {
@@ -29,6 +33,7 @@ namespace DEVSOC2024
         TargetState target = new TargetState();
         public Card playCard;
         CurrentAction currentAction = CurrentAction.None;
+        bool free;
         
         void Awake()
         {
@@ -59,7 +64,7 @@ namespace DEVSOC2024
             
             decks.Add(new List<Card>());
             decks.Add(new List<Card>());
-            Debug.Log(decks.Count);
+;
 
             playerNumber = (int) NetworkManager.Singleton.LocalClientId;
             
@@ -75,8 +80,8 @@ namespace DEVSOC2024
 
             playerScores.Add(0);
             playerScores.Add(0);
-            int starter = UnityEngine.Random.Range(0,2);
-            Debug.Log("Starter "+starter);
+            int starter = 0;
+
             ClientRpcParams clientRpcParams = new ClientRpcParams
             {
                 Send = new ClientRpcSendParams
@@ -93,18 +98,26 @@ namespace DEVSOC2024
         #region Public Functions
         public void PlaceCard(GameObject location)
         {
-            Debug.Log(playCard.template.id);
+
             TableCard target = location.GetComponent<TableCard>();
-            
+            Abilities curr = playCard.template.abilities;
             PlayCardServerRpc(playCard,target.row,location.transform.GetSiblingIndex());
-            SetGame();
+            if(curr == Abilities.Summon || curr == Abilities.Destroy || curr == Abilities.RedPower)
+            {
+
+            }
+            else
+            {
+                SetGame();
+            }
             
             
         }
 
         public void setPlayCard(Card card)
         {
-            playCard = card;
+            playCard = new Card(card.template.id);
+
             
         }
 
@@ -139,6 +152,7 @@ namespace DEVSOC2024
                 };
 
                 if(card.template.abilities == Abilities.Summon){
+                    free = true;
                     SummonAbilityClientRpc(card, clientRpcParams);
                 }
                 else if(card.template.abilities == Abilities.Destroy){
@@ -148,36 +162,68 @@ namespace DEVSOC2024
                     RedPowerAbilityClientRpc(card, clientRpcParams);                    
                 }
                 else if(card.template.abilities == Abilities.IncPower){
-                    if(allHolders[row][column-1] != null || column>0)
+                    if(column>0)
                     {
-                        allHolders[row][column-1].template.power += playCard.template.abilityValue;
+
+                        if(allHolders[row][column-1].template != null)
+                        {
+                            
+                            allHolders[row][column-1].power += card.template.abilityValue;
+                            UpdateCardClientRpc(allHolders[row][column+1],row,column-1);
+                        }
                     }
-                    if(allHolders[row][column+1] != null || column<5)
+                    if(column<5)
                     {
-                        allHolders[row][column+1].template.power += playCard.template.abilityValue;
+
+                        if(allHolders[row][column+1].template != null)
+                        {
+                            
+                            allHolders[row][column+1].power += card.template.abilityValue;
+                            UpdateCardClientRpc(allHolders[row][column+1],row,column+1);
+                        }
                     }
                     UpdateScoresValue();
                     UpdateScoresClientRpc(playerScores[1],playerScores[0]);
                 }
                 else if(card.template.abilities == Abilities.RedResource){
-                    playerResources[(playerNumber==1)?0:1] -= playCard.template.abilityValue;
-                    UpdateResourcesClientRpc(playerResources[clientId],clientRpcParams);
+                    Debug.Log("reducing resource");
+                    playerResources[(clientId==1)?0:1] -= card.template.abilityValue;
+                    clientRpcParams.Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new ulong[]{(ulong)(1-clientId)}
+                    };
+                    UpdateResourcesClientRpc(playerResources[1-clientId],clientRpcParams);
                 }
                 else if(card.template.abilities == Abilities.IncResource){
-                    playerResources[(playerNumber==1)?0:1] += playCard.template.abilityValue;
-                    UpdateResourcesClientRpc(playerResources[clientId],clientRpcParams);
+                    playerResources[(clientId==1)?0:1] += card.template.abilityValue;
+                    clientRpcParams.Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new ulong[]{(ulong)(1-clientId)}
+                    };
+                    UpdateResourcesClientRpc(playerResources[1-clientId],clientRpcParams);
                 }
                 else if(card.template.abilities == Abilities.SummonOpp){
-                    if(allHolders[row][column-1] != null || column>0)
+                    if (column>0)
                     {
-                        allHolders[row][column-1].template.power -= playCard.template.abilityValue;
+
+                        if(allHolders[row][column-1].template != null)
+                        {
+                            allHolders[row][column-1].power -= card.template.abilityValue;
+                            UpdateCardClientRpc(allHolders[row][column-1],row,column+1);
+                        }
                     }
-                    if(allHolders[row][column+1] != null || column<5)
+                    if(column<5)
                     {
-                        allHolders[row][column+1].template.power -= playCard.template.abilityValue;
+
+                        if(allHolders[row][column+1].template != null && column<5)
+                        {
+                            allHolders[row][column+1].power -= card.template.abilityValue;
+                            UpdateCardClientRpc(allHolders[row][column+1],row,column+1);
+                        }
                     }
                     UpdateScoresValue();
                     UpdateScoresClientRpc(playerScores[1],playerScores[0]);
+                    
                 }
             }
         }
@@ -196,6 +242,7 @@ namespace DEVSOC2024
         {
             currstate = game;
             playCard = null;
+            free = false;
             ui.removeCancel();
             ui.setEnd();
         }
@@ -267,11 +314,19 @@ namespace DEVSOC2024
         [ServerRpc(RequireOwnership = false)]
         void PlayCardServerRpc(Card card,int row,int column,ServerRpcParams serverRpcParams = default)
         {
+
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
             int newRow = (row + clientId * 2)%4;
             allHolders[newRow][column] = card;
             PlayCardUIClientRpc(card,row,column,clientId);
-            playerResources[clientId] -= card.template.cost;
+            if(free)
+            {
+                free = false;
+            }
+            else
+            {
+                playerResources[clientId] -= card.template.cost;
+            }
             ClientRpcParams clientRpcParams = new ClientRpcParams
             {
                 Send = new ClientRpcSendParams
@@ -311,6 +366,26 @@ namespace DEVSOC2024
                 endGame();
                 return;
             }
+            
+            int increase = 0;
+            for(int i = 0;i<2;i++)
+            {
+                for(int j = 0; j< 5;j++)
+                {
+                    Card card = allHolders[i+(2*(turn%2))][j];
+                    
+                    if(card.template == null)
+                    {
+                        continue;
+                    }
+                    if(card.template.abilities == Abilities.IncResource)
+                    {
+                        increase += card.template.abilityValue;
+                    }
+                }
+            }
+            
+            playerResources[turn%2] += increase;
 
             EndTurnClientRpc();
             ClientRpcParams clientRpcParams = new ClientRpcParams
@@ -359,7 +434,7 @@ namespace DEVSOC2024
             }
             else
             {
-                Debug.Log("Game");
+                
                 SetGame();
                 
             }
@@ -419,7 +494,7 @@ namespace DEVSOC2024
         [ClientRpc]
         void SummonAbilityClientRpc(Card card, ClientRpcParams clientRpcParams = default)
         {
-            Debug.Log("summoning "+ card.template.abilityValue);
+
             setPlayCard(new Card(card.template.abilityValue));
             SetPlay();
         }
@@ -436,6 +511,17 @@ namespace DEVSOC2024
         {
             currentAction = CurrentAction.RedPower;
             SetTarget();
+        }
+
+        [ClientRpc]
+        void UpdateCardClientRpc(Card card,int row,int column)
+        {
+            if(playerNumber == 1)
+            {
+                row = (row+2)%4;
+            }
+            ui.UpdateCard(card,row,column);
+            
         }
 
 
