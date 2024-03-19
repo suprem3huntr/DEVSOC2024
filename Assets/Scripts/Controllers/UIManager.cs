@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace DEVSOC2024
 {
@@ -24,6 +26,14 @@ namespace DEVSOC2024
         TMP_Text enemyScore;
         [SerializeField]
         TMP_Text resources;
+        [SerializeField]
+        GameObject gameOver;
+        [SerializeField]
+        GameObject selfTurn;
+        [SerializeField]
+        GameObject enemyTurn;
+        [SerializeField]
+        TMP_Text resultText;
         public void setPlayerNumber(int pno)
         {
             playerNumber = pno;
@@ -74,23 +84,36 @@ namespace DEVSOC2024
 
         public void Win()
         {
-            Debug.Log("win");
+            gameOver.SetActive(true);
+            resultText.text = "YOU WIN";
         }
 
         public void Tie()
         {
-            Debug.Log("tie");
+            gameOver.SetActive(true);
+            resultText.text = "DRAW";
         }
 
         public void Lose()
         {
-            Debug.Log("lose");
+            gameOver.SetActive(true);
+            resultText.text = "YOU LOSE";
         }
 
         public void DestroyCard(int row,int column)
         {
             GameObject target = rows[row].GetChild(column).gameObject;
             target.GetComponent<TableCard>().Kill();
+        }
+        public void SetTurn(bool turn)
+        {
+            enemyTurn.SetActive(!turn);
+            selfTurn.SetActive(turn);
+        }
+
+        public void ReturntoLobby()
+        {
+            SceneManager.LoadScene(1);
         }
 
 

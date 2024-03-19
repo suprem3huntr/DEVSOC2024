@@ -304,6 +304,7 @@ namespace DEVSOC2024
         private void endGame()
         {
             endGameClientRPC(playerScores[0],playerScores[1]);
+            NetworkManager.Singleton.Shutdown();
         }
 
         #endregion
@@ -457,12 +458,14 @@ namespace DEVSOC2024
             if(currstate.currState != States.IdleState)
             {
                 SetIdle();
+                ui.SetTurn(false);
                 
             }
             else
             {
                 
                 SetGame();
+                ui.SetTurn(true);
                 
             }
         }

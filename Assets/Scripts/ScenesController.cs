@@ -67,12 +67,13 @@ namespace DEVSOC2024
             }
         }
 
-        public async void Join(string joinCode)
+        public async void Join(string joinCodeinp)
         {
+            joinCode = joinCodeinp;
             try
             {
                 JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
-
+                
                 NetworkManager.Singleton.GetComponent<UnityTransport>().SetClientRelayData(
                     joinAllocation.RelayServer.IpV4,
                     (ushort) joinAllocation.RelayServer.Port,
