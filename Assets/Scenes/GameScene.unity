@@ -614,10 +614,10 @@ MonoBehaviour:
   playerScore: {fileID: 1868584778}
   enemyScore: {fileID: 1893847998}
   resources: {fileID: 1205369940}
-  gameOver: {fileID: 0}
-  selfTurn: {fileID: 0}
-  enemyTurn: {fileID: 0}
-  resultText: {fileID: 0}
+  gameOver: {fileID: 182930408}
+  selfTurn: {fileID: 852575467}
+  enemyTurn: {fileID: 887565906}
+  resultText: {fileID: 1211961109}
 --- !u!4 &223713790
 Transform:
   m_ObjectHideFlags: 0

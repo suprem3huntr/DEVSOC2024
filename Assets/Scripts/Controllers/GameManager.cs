@@ -457,6 +457,7 @@ namespace DEVSOC2024
         [ClientRpc]
         void EndTurnClientRpc(ClientRpcParams clientRpcParams = default)
         {
+            Debug.Log("Starting");
             if(currstate.currState != States.IdleState)
             {
                 SetIdle();
