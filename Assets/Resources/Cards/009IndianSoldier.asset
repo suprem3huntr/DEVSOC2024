@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 9
   cardName: Indian Soldier
-  cost: 0
-  power: 0
+  cost: 2
+  power: 1
   description: Swaraj
   cardImage: {fileID: 21300000, guid: 99d3c0c92e09afdc0973fcfb31249bf3, type: 3}
   cardBackground: {fileID: 21300000, guid: 2243342cfa4ef7d418076b892ea8fac1, type: 3}

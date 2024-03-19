@@ -103,7 +103,7 @@ namespace DEVSOC2024
             TableCard target = location.GetComponent<TableCard>();
             Abilities curr = playCard.template.abilities;
             PlayCardServerRpc(playCard,target.row,location.transform.GetSiblingIndex());
-            if(curr == Abilities.Summon || curr == Abilities.Destroy || curr == Abilities.RedPower)
+            if(playCard.template.ability == false || curr == Abilities.Summon || curr == Abilities.Destroy || curr == Abilities.RedPower)
             {
 
             }
@@ -181,7 +181,7 @@ namespace DEVSOC2024
                     }
                     if(column<4)
                     {
-                        Debug.Log("Row: "+row+"  "+column);
+                        
                         if(allHolders[row][column+1].template != null)
                         {
                             
@@ -201,14 +201,7 @@ namespace DEVSOC2024
                     };
                     UpdateResourcesClientRpc(playerResources[1-clientId],clientRpcParams);
                 }
-                else if(card.template.abilities == Abilities.IncResource){
-                    playerResources[(clientId==1)?0:1] += card.template.abilityValue;
-                    clientRpcParams.Send = new ClientRpcSendParams
-                    {
-                        TargetClientIds = new ulong[]{(ulong)(1-clientId)}
-                    };
-                    UpdateResourcesClientRpc(playerResources[1-clientId],clientRpcParams);
-                }
+                
                 else if(card.template.abilities == Abilities.SummonOpp){
                     if (column>0)
                     {
@@ -265,7 +258,7 @@ namespace DEVSOC2024
 
         public void SetTarget()
         {
-            Debug.Log("Target");
+            
             currstate = target;
             ui.removeEnd();
             ui.SetPlay();
@@ -363,7 +356,7 @@ namespace DEVSOC2024
         [ServerRpc(RequireOwnership = false)]
         void RedPowerServerRpc(int abilityValue, int row, int column, ServerRpcParams serverRpcParams = default)
         {
-            Debug.Log("Target row: "+row);
+            
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
             int newRow = (row + clientId * 2)%4;
             allHolders[newRow][column].power -= abilityValue;
@@ -410,6 +403,7 @@ namespace DEVSOC2024
                     }
                     if(card.template.abilities == Abilities.IncResource)
                     {
+                        Debug.Log(increase);
                         increase += card.template.abilityValue;
                     }
                 }
@@ -457,7 +451,7 @@ namespace DEVSOC2024
         [ClientRpc]
         void EndTurnClientRpc(ClientRpcParams clientRpcParams = default)
         {
-            Debug.Log("Starting");
+            
             if(currstate.currState != States.IdleState)
             {
                 SetIdle();
