@@ -9,7 +9,7 @@ namespace DEVSOC2024
     [CreateAssetMenu(fileName = "New Character Card",menuName = "Cards/Character Card")]
     public class CardSO : ScriptableObject
     {
-        public int id = -1;
+        public int id;
         public string cardName;
         public int cost;
         public int power;
