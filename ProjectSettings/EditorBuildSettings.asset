@@ -8,19 +8,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/TestLobby.unity
     guid: 33bb32685a1231b4bbe48178bcaad492
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/GautamProtoype.unity
     guid: e0aab7c487985df4f87e4235be2fb8f4
-  - enabled: 1
-    path: Assets/Scenes/Lobby.unity
-    guid: 08c6e22a5855a0f479b58d895aa5b742
-  - enabled: 1
-    path: Assets/Scenes/Waiting.unity
-    guid: 3d27bd3a8b6fb34459ada09d04778b65
-  - enabled: 1
-    path: Assets/Scenes/GameScene.unity
-    guid: 5389c67fc95ce8d4cb208822e7a997bf
   m_configObjects: {}

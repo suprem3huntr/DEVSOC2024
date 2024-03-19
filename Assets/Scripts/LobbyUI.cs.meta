@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 171bf614819297246809bd582f6cd171
+<<<<<<<< HEAD:Assets/Scripts/States/GameState.cs.meta
+guid: 043a067e8d1bbb1409f6721b38742755
+========
+guid: 526edae897e60f145b8450985fa72694
+>>>>>>>> abilities:Assets/Scripts/Utility/BuyPanel.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

@@ -51,6 +51,16 @@ namespace DEVSOC2024
             return allCards[index];
         }
         
+        public List<int> GetCardIDs()
+        {
+            List<int> result = new List<int>();
+            for(int i=0;i<allCards.Count;i++)
+            {
+                result.Add(allCards[i].id);
+
+            }
+            return result;
+        }
         
     }
 }

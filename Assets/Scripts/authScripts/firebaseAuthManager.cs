@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Database;
 using TMPro;
 using System.Threading.Tasks;
 using DEVSOC2024;
+using System.Linq;
+using Unity.VisualScripting;
 
 public class firebaseAuthManager : MonoBehaviour
 {
@@ -29,6 +33,7 @@ public class firebaseAuthManager : MonoBehaviour
     public TMP_InputField passwordRegisterVerifyField;
     public TMP_Text warningRegisterText;
 
+    DatabaseReference dbReference;
 
     private void Awake()
     {
@@ -49,6 +54,7 @@ public class firebaseAuthManager : MonoBehaviour
         passwordLoginField.contentType = TMP_InputField.ContentType.Password;
         passwordRegisterField.contentType = TMP_InputField.ContentType.Password;
         passwordRegisterVerifyField.contentType = TMP_InputField.ContentType.Password;
+
     }
 
     private void InitializeFirebase()
@@ -56,6 +62,7 @@ public class firebaseAuthManager : MonoBehaviour
         Debug.Log("Setting up Firebase Auth");
         //Set the authentication instance object
         auth = FirebaseAuth.DefaultInstance;
+        dbReference = FirebaseDatabase.DefaultInstance.RootReference;
     }
 
     public void LoginButton()
@@ -68,6 +75,19 @@ public class firebaseAuthManager : MonoBehaviour
     {
         //Call the register coroutine passing the email, password, and username
         StartCoroutine(Register(emailRegisterField.text, passwordRegisterField.text, usernameRegisterField.text));
+    }
+
+    public void ClearLoginFields()
+    {
+        emailLoginField.text = "";
+        passwordLoginField.text = "";
+    }
+    public void ClearRegisterFields()
+    {
+        usernameRegisterField.text = "";
+        emailRegisterField.text = "";
+        passwordRegisterField.text = "";
+        passwordRegisterVerifyField.text = "";
     }
 
     private IEnumerator Login(string _email, string _password)
@@ -113,10 +133,14 @@ public class firebaseAuthManager : MonoBehaviour
             Debug.LogFormat("User signed in successfully: {0} ({1})", User.DisplayName, User.Email);
             warningLoginText.text = "";
             confirmLoginText.text = "Logged In";
+            yield return new WaitForSeconds(2);
+            loadData();
+            
+
         }
     }
 
-     private IEnumerator Register(string _email, string _password, string _username)
+    private IEnumerator Register(string _email, string _password, string _username)
     {
         if (_username == "")
         {
@@ -190,10 +214,135 @@ public class firebaseAuthManager : MonoBehaviour
                         //Now return to login screen
                         uiManager.instance.LoginScreen();
                         warningRegisterText.text = "";
+                        saveData();
+                        ClearRegisterFields();
+                        ClearLoginFields();
                     }
                 }
             }
         }
     }
 
+    private IEnumerator UpdateUsernameAuth(string _username)
+    {
+        //Create a user profile and set the username
+        UserProfile profile = new UserProfile { DisplayName = _username };
+
+        //Call the Firebase auth update user profile function passing the profile with the username
+        Task ProfileTask = User.UpdateUserProfileAsync(profile);
+        //Wait until the task completes
+        yield return new WaitUntil(predicate: () => ProfileTask.IsCompleted);
+
+        if (ProfileTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {ProfileTask.Exception}");
+        }
+        else
+        {
+            //Auth username is now updated
+        }        
+    }
+
+    private IEnumerator UpdateUsernameDatabase(string _username)
+    {
+        //Set the currently logged in user username in the database
+        Task DBTask = dbReference.Child("users").Child(User.UserId).Child("username").SetValueAsync(_username);
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else
+        {
+            //Database username is now updated
+        }
+    }
+
+    private IEnumerator UpdateCardDataDatabase()
+    {
+        PlayerDataHolder plr = GameObject.FindGameObjectWithTag("Data").GetComponent<PlayerDataHolder>();
+        plr.SetDefaultCards();
+        Task DBTask = dbReference.Child("users").Child(User.UserId).Child("CardData").SetValueAsync(plr.ConvertCardDataToString());
+
+        yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+        if (DBTask.Exception != null)
+        {
+            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
+        }
+        else
+        {
+
+        }
+    }
+
+    public void saveData()
+    {
+        StartCoroutine(UpdateUsernameAuth(usernameRegisterField.text));
+        StartCoroutine(UpdateUsernameDatabase(usernameRegisterField.text));
+        StartCoroutine(UpdateCardDataDatabase());     
+    }
+    public static void ParseStringToLists(string data, out List<int> unlockedCardsList, out List<int> deckList)
+    {
+        unlockedCardsList = new List<int>();
+        deckList = new List<int>();
+
+        string[] parts = data.Split(':');
+        if (parts.Length != 2)
+        {
+            throw new ArgumentException("Invalid data format");
+        }
+
+        string unlockedCardsPart = parts[0];
+        string deckPart = parts[1];
+
+        AddNumbersToList(unlockedCardsPart, unlockedCardsList);
+        AddNumbersToList(deckPart, deckList);
+    }
+
+    public static void AddNumbersToList(string input, List<int> list)
+    {
+        string[] numbers = input.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string number in numbers)
+        {
+            if (int.TryParse(number, out int num))
+            {
+                list.Add(num);
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid number format: {number}");
+            }
+        }
+    }
+
+    public void loadData()
+    {
+        StartCoroutine(GetCardData((string cardData) => {
+            
+            List<int> unlocked;
+            List<int> deck;
+            ParseStringToLists(cardData,out unlocked,out deck);
+            PlayerDataHolder plr = GameObject.FindGameObjectWithTag("Data").GetComponent<PlayerDataHolder>();
+            plr.deck = deck;
+            plr.unlockedCards = unlocked;
+            uiManager.instance.LobbyScreen();
+        }));
+    }
+
+    public IEnumerator GetCardData(Action<string> onCallback)
+    {
+        var CardData = dbReference.Child("users").Child(User.UserId).Child("CardData").GetValueAsync();
+        yield return new WaitUntil(predicate: () => CardData.IsCompleted);
+
+        if(CardData != null)
+        {
+            DataSnapshot snapshot = CardData.Result;
+            onCallback.Invoke(snapshot.Value.ToString());
+
+
+        }
+    }
 }
