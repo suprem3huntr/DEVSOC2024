@@ -102,8 +102,9 @@ namespace DEVSOC2024
 
             TableCard target = location.GetComponent<TableCard>();
             Abilities curr = playCard.template.abilities;
+            bool ability = playCard.template.ability;
             PlayCardServerRpc(playCard,target.row,location.transform.GetSiblingIndex());
-            if(playCard.template.ability == true &&( curr == Abilities.Summon || curr == Abilities.Destroy || curr == Abilities.RedPower))
+            if(ability == true &&( curr == Abilities.Summon || curr == Abilities.Destroy || curr == Abilities.RedPower))
             {
 
             }
@@ -135,10 +136,11 @@ namespace DEVSOC2024
         public void completeAction(GameObject location)
         {
             TableCard target = location.GetComponent<TableCard>();
+            int currAbilityValue = abilityValue;
             SetGame();
             if(currentAction == CurrentAction.RedPower)
             {
-                RedPowerServerRpc(abilityValue, target.row, location.transform.GetSiblingIndex());
+                RedPowerServerRpc(currAbilityValue, target.row, location.transform.GetSiblingIndex());
             }
             else if(currentAction == CurrentAction.Destroy)
             {
@@ -248,6 +250,7 @@ namespace DEVSOC2024
 
         public void SetGame()
         {
+            
             currstate = game;
             playCard = null;
             free = false;
@@ -403,7 +406,7 @@ namespace DEVSOC2024
                     }
                     if(card.template.abilities == Abilities.IncResource)
                     {
-                        Debug.Log(increase);
+
                         increase += card.template.abilityValue;
                     }
                 }
@@ -521,8 +524,9 @@ namespace DEVSOC2024
         [ClientRpc]
         void SummonAbilityClientRpc(Card card, ClientRpcParams clientRpcParams = default)
         {
-
+            
             setPlayCard(new Card(card.template.abilityValue));
+            
             SetPlay();
         }
 
@@ -536,6 +540,7 @@ namespace DEVSOC2024
         [ClientRpc]
         void RedPowerAbilityClientRpc(Card card, ClientRpcParams clientRpcParams = default)
         {
+            
             abilityValue = card.template.abilityValue;
             currentAction = CurrentAction.RedPower;
             SetTarget();

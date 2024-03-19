@@ -37,7 +37,7 @@ namespace DEVSOC2024
             }
             else if(gameManager.currstate.currState == States.TargetState && transform.childCount != 0)
             {
-                Debug.Log("Selected: "+row);
+                
                 gameManager.completeAction(gameObject);
             }
         }
@@ -62,7 +62,7 @@ namespace DEVSOC2024
 
         public void UpdateCard(Card cardInp)
         {
-            Debug.Log(card);
+            
             card = cardInp;
             
             display.UpdateDisplay(card);
