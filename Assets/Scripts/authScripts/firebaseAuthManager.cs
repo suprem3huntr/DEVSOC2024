@@ -135,7 +135,7 @@ public class firebaseAuthManager : MonoBehaviour
             confirmLoginText.text = "Logged In";
             yield return new WaitForSeconds(2);
             loadData();
-            uiManager.instance.LobbyScreen();
+            
 
         }
     }
@@ -320,37 +320,29 @@ public class firebaseAuthManager : MonoBehaviour
 
     public void loadData()
     {
-        Task<DataSnapshot> DBTask = dbReference.Child("users").Child(User.UserId).GetValueAsync();
-
-        if (DBTask.Exception != null)
-        {
-            Debug.LogWarning(message: $"Failed to register task with {DBTask.Exception}");
-        }
-        else if (DBTask.Result.Value == null)
-        {
-            //No data exists yet
-            PlayerDataHolder plr = GameObject.FindGameObjectWithTag("Data").GetComponent<PlayerDataHolder>();
-            plr.SetDefaultCards();
-            string cardsData = plr.ConvertCardDataToString();
-            ParseStringToLists(cardsData,out plr.unlockedCards,out plr.deck);
-
-        }
-        else
-        {
-            //Data has been retrieved
-            PlayerDataHolder plr = GameObject.FindGameObjectWithTag("Data").GetComponent<PlayerDataHolder>();
-            DataSnapshot snapshot = DBTask.Result;
-            string userCardData = snapshot.Child("CardData").Value.ToString();
-            ParseStringToLists(userCardData, out plr.unlockedCards, out plr.deck);
-            Debug.Log("Unlocked Cards:\n");
-            for(int i = 0; i < plr.unlockedCards.Count; i++)
-            {
-                Debug.Log(plr.unlockedCards.ElementAt(i));
-            }
+        StartCoroutine(GetCardData((string cardData) => {
             
-
-            
-        }
+            List<int> unlocked;
+            List<int> deck;
+            ParseStringToLists(cardData,out unlocked,out deck);
+            PlayerDataHolder plr = GameObject.FindGameObjectWithTag("Data").GetComponent<PlayerDataHolder>();
+            plr.deck = deck;
+            plr.unlockedCards = unlocked;
+            uiManager.instance.LobbyScreen();
+        }));
     }
 
+    public IEnumerator GetCardData(Action<string> onCallback)
+    {
+        var CardData = dbReference.Child("users").Child(User.UserId).Child("CardData").GetValueAsync();
+        yield return new WaitUntil(predicate: () => CardData.IsCompleted);
+
+        if(CardData != null)
+        {
+            DataSnapshot snapshot = CardData.Result;
+            onCallback.Invoke(snapshot.Value.ToString());
+
+
+        }
+    }
 }

@@ -70,13 +70,13 @@ namespace DEVSOC2024
 
         public string ConvertCardDataToString()
         {
-            string str = "UnlockedCards: ";
+            string str = "";
             for(int i = 0; i < unlockedCards.Count; i++)
             {
                 str += unlockedCards.ElementAt(i).ToString() + " ";
                 
             }
-            str += "Deck: ";
+            str += ":";
             for(int i = 0; i < deck.Count; i++)
             {
                 str += deck.ElementAt(i).ToString() + " ";
