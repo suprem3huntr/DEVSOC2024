@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cef05e3456be91845a021a89d17eb519, type: 3}
   m_Name: 009IndianSoldier
   m_EditorClassIdentifier: 
-  id: -1
+  id: 9
   cardName: Indian Soldier
   cost: 0
   power: 0

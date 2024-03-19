@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cef05e3456be91845a021a89d17eb519, type: 3}
   m_Name: 006ItalianRoyalArmy
   m_EditorClassIdentifier: 
-  id: -1
+  id: 6
   cardName: Italian Royal Army
   cost: 2
   power: 4
@@ -21,6 +21,6 @@ MonoBehaviour:
   cardBackground: {fileID: 21300000, guid: cb3491ec727520642ae4529a5261568a, type: 3}
   faction: Axis
   type: Infantry
-  ability: 0
-  abilities: 0
-  abilityValue: 0
+  ability: 1
+  abilities: 2
+  abilityValue: 2

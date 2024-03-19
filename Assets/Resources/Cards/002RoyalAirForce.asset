@@ -22,5 +22,5 @@ MonoBehaviour:
   faction: Allies
   type: Military
   ability: 1
-  abilities: 3
-  abilityValue: 1
+  abilities: 4
+  abilityValue: 2

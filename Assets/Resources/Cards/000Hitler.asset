@@ -22,5 +22,5 @@ MonoBehaviour:
   faction: Axis
   type: Persona
   ability: 1
-  abilities: 5
-  abilityValue: 2
+  abilities: 0
+  abilityValue: 8

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cef05e3456be91845a021a89d17eb519, type: 3}
   m_Name: 007PolticalFunding
   m_EditorClassIdentifier: 
-  id: -1
+  id: 7
   cardName: Political Funding
   cost: 2
   power: 0

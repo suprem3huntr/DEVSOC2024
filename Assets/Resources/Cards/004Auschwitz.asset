@@ -22,5 +22,5 @@ MonoBehaviour:
   faction: Axis
   type: Place
   ability: 1
-  abilities: 4
-  abilityValue: 1
+  abilities: 1
+  abilityValue: 0
