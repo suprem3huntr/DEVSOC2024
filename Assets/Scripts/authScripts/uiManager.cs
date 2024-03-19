@@ -41,7 +41,7 @@ namespace DEVSOC2024
         public void LobbyScreen()
         {
             loginUI.SetActive(false);
-            SceneManager.LoadScene("TestLobby");
+            SceneManager.LoadScene("Lobby");
         }
     }
 }
