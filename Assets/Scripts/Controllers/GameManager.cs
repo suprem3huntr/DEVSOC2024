@@ -103,7 +103,7 @@ namespace DEVSOC2024
             TableCard target = location.GetComponent<TableCard>();
             Abilities curr = playCard.template.abilities;
             PlayCardServerRpc(playCard,target.row,location.transform.GetSiblingIndex());
-            if(playCard.template.ability == false || curr == Abilities.Summon || curr == Abilities.Destroy || curr == Abilities.RedPower)
+            if(playCard.template.ability == true &&( curr == Abilities.Summon || curr == Abilities.Destroy || curr == Abilities.RedPower))
             {
 
             }
