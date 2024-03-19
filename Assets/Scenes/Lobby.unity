@@ -202,7 +202,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Enter text...
+  m_text: Enter Code
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1325,7 +1325,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1156317565}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 171bf614819297246809bd582f6cd171, type: 3}
+  m_Script: {fileID: 11500000, guid: 043a067e8d1bbb1409f6721b38742755, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   lobbyCode: {fileID: 703184234}
