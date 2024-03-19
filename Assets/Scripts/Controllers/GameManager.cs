@@ -258,6 +258,7 @@ namespace DEVSOC2024
             currstate = game;
             playCard = null;
             free = false;
+            abilityValue = 0;
             ui.removeCancel();
             ui.setEnd();
         }
@@ -267,6 +268,7 @@ namespace DEVSOC2024
             Debug.Log("Target");
             currstate = target;
             ui.removeEnd();
+            ui.SetPlay();
         }
 
         public void SetPlay()
