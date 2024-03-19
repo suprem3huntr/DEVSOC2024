@@ -35,8 +35,9 @@ namespace DEVSOC2024
                     gameManager.PlaceCard(gameObject);
                 }
             }
-            if(gameManager.currstate.currState == States.TargetState && transform.childCount != 0)
+            else if(gameManager.currstate.currState == States.TargetState && transform.childCount != 0)
             {
+                Debug.Log("Selected: "+row);
                 gameManager.completeAction(gameObject);
             }
         }
@@ -51,8 +52,9 @@ namespace DEVSOC2024
             
         }
 
-        public void setCard(Card card)
+        public void setCard(Card inpcard)
         {
+            card = inpcard;
             GameObject cardDisplay = Instantiate(cardPrefab,gameObject.transform);
             display = cardDisplay.GetComponent<CardDisplay>();
             display.UpdateDisplay(card);

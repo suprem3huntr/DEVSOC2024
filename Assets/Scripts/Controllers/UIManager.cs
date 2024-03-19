@@ -68,6 +68,7 @@ namespace DEVSOC2024
         public void UpdateCard(Card card,int row,int column)
         {
             Debug.Log(row+" "+column);
+            Debug.Log(card.power);
             rows[row].GetChild(column).GetComponent<TableCard>().UpdateCard(card);
         }
 
