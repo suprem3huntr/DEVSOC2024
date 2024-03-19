@@ -26,6 +26,7 @@ namespace DEVSOC2024
         
         public void OnPointerClick(PointerEventData eventData)
         {
+            
 
             if(gameManager.currstate.currState == States.PlayState && transform.childCount == 0)
             {
@@ -36,7 +37,7 @@ namespace DEVSOC2024
             }
             if(gameManager.currstate.currState == States.TargetState && transform.childCount != 0)
             {
-                target = card;
+                gameManager.completeAction(gameObject);
             }
         }
 
@@ -63,6 +64,14 @@ namespace DEVSOC2024
             card = cardInp;
             
             display.UpdateDisplay(card);
+        }
+
+        public void Kill()
+        {
+            GameObject.Destroy(display.gameObject);
+            display = null;
+            card = null;
+            
         }
     }
 }

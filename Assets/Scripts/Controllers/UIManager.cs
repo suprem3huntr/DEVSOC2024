@@ -86,6 +86,12 @@ namespace DEVSOC2024
             Debug.Log("lose");
         }
 
+        public void DestroyCard(int row,int column)
+        {
+            GameObject target = rows[row].GetChild(column).gameObject;
+            target.GetComponent<TableCard>().Kill();
+        }
+
 
     }
 }

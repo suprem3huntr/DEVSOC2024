@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cef05e3456be91845a021a89d17eb519, type: 3}
-  m_Name: 003Alowehr
+  m_Name: 006
   m_EditorClassIdentifier: 
-  id: 3
-  cardName: Alowehr
-  cost: 2
-  power: 2
-  description: It could be you, It could be me
+  id: 6
+  cardName: 6
+  cost: 1
+  power: 6
+  description: 6
   cardImage: {fileID: 0}
-  cardBackground: {fileID: 21300000, guid: cb3491ec727520642ae4529a5261568a, type: 3}
-  faction: Axis
-  type: Spy
+  cardBackground: {fileID: 21300000, guid: 2243342cfa4ef7d418076b892ea8fac1, type: 3}
+  faction: y
+  type: y
   ability: 1
-  abilities: 6
-  abilityValue: 1
+  abilities: 2
+  abilityValue: 2
