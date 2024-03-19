@@ -16,8 +16,8 @@ MonoBehaviour:
   cardName: Churchill
   cost: 7
   power: 5
-  description: Bureuacrat
-  cardImage: {fileID: 0}
+  description: Loves eggs benedict.
+  cardImage: {fileID: 21300000, guid: 2c0e16fe92ee7d16f8c9d1217f317fdf, type: 3}
   cardBackground: {fileID: 21300000, guid: 2243342cfa4ef7d418076b892ea8fac1, type: 3}
   faction: Allies
   type: Persona

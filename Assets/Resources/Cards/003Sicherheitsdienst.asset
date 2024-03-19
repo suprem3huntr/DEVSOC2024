@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cef05e3456be91845a021a89d17eb519, type: 3}
-  m_Name: 000Hitler
+  m_Name: 003Sicherheitsdienst
   m_EditorClassIdentifier: 
-  id: 0
-  cardName: Hitler
-  cost: 7
-  power: 7
-  description: somebody find him a therapist.
-  cardImage: {fileID: 21300000, guid: 1de4f3473a5e7eb20918ba9ba7cfc1ad, type: 3}
+  id: 3
+  cardName: Sicherheitsdienst
+  cost: 5
+  power: 3
+  description: It could be you, It could be me
+  cardImage: {fileID: 21300000, guid: 8169f678d7d35edc49960fe32044c114, type: 3}
   cardBackground: {fileID: 21300000, guid: cb3491ec727520642ae4529a5261568a, type: 3}
   faction: Axis
-  type: Persona
+  type: Spy
   ability: 1
-  abilities: 5
-  abilityValue: 2
+  abilities: 6
+  abilityValue: 1

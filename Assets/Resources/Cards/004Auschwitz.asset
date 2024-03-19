@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cef05e3456be91845a021a89d17eb519, type: 3}
-  m_Name: 002BritainArmy
+  m_Name: 004Auschwitz
   m_EditorClassIdentifier: 
-  id: 2
-  cardName: BritArmy
-  cost: 3
-  power: 1
-  description: weak
-  cardImage: {fileID: 0}
-  cardBackground: {fileID: 21300000, guid: 2243342cfa4ef7d418076b892ea8fac1, type: 3}
-  faction: Allies
-  type: Military
+  id: 4
+  cardName: Auschwitz
+  cost: 5
+  power: 8
+  description: My grandad was here
+  cardImage: {fileID: 21300000, guid: f178cf7421b4095549d6609a237b2db1, type: 3}
+  cardBackground: {fileID: 21300000, guid: cb3491ec727520642ae4529a5261568a, type: 3}
+  faction: Axis
+  type: Place
   ability: 1
-  abilities: 3
+  abilities: 4
   abilityValue: 1

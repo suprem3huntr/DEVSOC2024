@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cef05e3456be91845a021a89d17eb519, type: 3}
-  m_Name: 003Alowehr
+  m_Name: 006ItalianRoyalArmy
   m_EditorClassIdentifier: 
-  id: 3
-  cardName: Alowehr
+  id: -1
+  cardName: Italian Royal Army
   cost: 2
-  power: 1
-  description: It could be you, It could be me
-  cardImage: {fileID: 0}
+  power: 4
+  description: Salus rei publicae suprema lex esto
+  cardImage: {fileID: 21300000, guid: 80ed3647a1d4382bfa178991e5a805d8, type: 3}
   cardBackground: {fileID: 21300000, guid: cb3491ec727520642ae4529a5261568a, type: 3}
   faction: Axis
-  type: Spy
-  ability: 1
-  abilities: 6
-  abilityValue: 1
+  type: Infantry
+  ability: 0
+  abilities: 0
+  abilityValue: 0
