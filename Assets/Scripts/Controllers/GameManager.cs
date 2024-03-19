@@ -135,7 +135,7 @@ namespace DEVSOC2024
         public void completeAction(GameObject location)
         {
             TableCard target = location.GetComponent<TableCard>();
-            SetPlay();
+            SetGame();
             if(currentAction == CurrentAction.RedPower)
             {
                 RedPowerServerRpc(abilityValue, target.row, location.transform.GetSiblingIndex());
@@ -360,6 +360,7 @@ namespace DEVSOC2024
         [ServerRpc(RequireOwnership = false)]
         void RedPowerServerRpc(int abilityValue, int row, int column, ServerRpcParams serverRpcParams = default)
         {
+            Debug.Log("Target row: "+row);
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
             int newRow = (row + clientId * 2)%4;
             allHolders[newRow][column].power -= abilityValue;
@@ -535,6 +536,7 @@ namespace DEVSOC2024
         [ClientRpc]
         void RedPowerAbilityClientRpc(Card card, ClientRpcParams clientRpcParams = default)
         {
+            abilityValue = card.template.abilityValue;
             currentAction = CurrentAction.RedPower;
             SetTarget();
         }
