@@ -26,6 +26,7 @@ namespace DEVSOC2024
         
         public void OnPointerClick(PointerEventData eventData)
         {
+            
 
             if(gameManager.currstate.currState == States.PlayState && transform.childCount == 0)
             {
@@ -34,9 +35,10 @@ namespace DEVSOC2024
                     gameManager.PlaceCard(gameObject);
                 }
             }
-            if(gameManager.currstate.currState == States.TargetState && transform.childCount != 0)
+            else if(gameManager.currstate.currState == States.TargetState && transform.childCount != 0)
             {
-                target = card;
+                Debug.Log("Selected: "+row);
+                gameManager.completeAction(gameObject);
             }
         }
 
@@ -50,8 +52,9 @@ namespace DEVSOC2024
             
         }
 
-        public void setCard(Card card)
+        public void setCard(Card inpcard)
         {
+            card = inpcard;
             GameObject cardDisplay = Instantiate(cardPrefab,gameObject.transform);
             display = cardDisplay.GetComponent<CardDisplay>();
             display.UpdateDisplay(card);
@@ -63,6 +66,14 @@ namespace DEVSOC2024
             card = cardInp;
             
             display.UpdateDisplay(card);
+        }
+
+        public void Kill()
+        {
+            GameObject.Destroy(display.gameObject);
+            display = null;
+            card = null;
+            
         }
     }
 }

@@ -25,7 +25,7 @@ namespace DEVSOC2024
         int turn = 0;
         NetworkList<int> playerResources = new NetworkList<int>();
         List<int> playerScores = new List<int>();
-        [SerializeField]
+        
         public State currstate;
         IdleState idle = new IdleState();
         GameState game = new GameState();
@@ -34,6 +34,7 @@ namespace DEVSOC2024
         public Card playCard;
         CurrentAction currentAction = CurrentAction.None;
         bool free;
+        int abilityValue = 0;
         
         void Awake()
         {
@@ -131,12 +132,17 @@ namespace DEVSOC2024
             EndTurnServerRpc();
         }
 
-        public void completeAction(GameManager location)
+        public void completeAction(GameObject location)
         {
             TableCard target = location.GetComponent<TableCard>();
+            SetGame();
             if(currentAction == CurrentAction.RedPower)
             {
-                RedPowerServerRpc(target.target.template.abilityValue, target.row, location.transform.GetSiblingIndex());
+                RedPowerServerRpc(abilityValue, target.row, location.transform.GetSiblingIndex());
+            }
+            else if(currentAction == CurrentAction.Destroy)
+            {
+                DestroyServerRpc(target.row, location.transform.GetSiblingIndex());
             }
         }
 
@@ -159,6 +165,7 @@ namespace DEVSOC2024
                     DestroyAbilityClientRpc(card, clientRpcParams);
                 }
                 else if(card.template.abilities == Abilities.RedPower){
+                    abilityValue = card.template.abilityValue;
                     RedPowerAbilityClientRpc(card, clientRpcParams);                    
                 }
                 else if(card.template.abilities == Abilities.IncPower){
@@ -169,12 +176,12 @@ namespace DEVSOC2024
                         {
                             
                             allHolders[row][column-1].power += card.template.abilityValue;
-                            UpdateCardClientRpc(allHolders[row][column+1],row,column-1);
+                            UpdateCardClientRpc(allHolders[row][column-1],row,column-1);
                         }
                     }
-                    if(column<5)
+                    if(column<4)
                     {
-
+                        Debug.Log("Row: "+row+"  "+column);
                         if(allHolders[row][column+1].template != null)
                         {
                             
@@ -186,7 +193,7 @@ namespace DEVSOC2024
                     UpdateScoresClientRpc(playerScores[1],playerScores[0]);
                 }
                 else if(card.template.abilities == Abilities.RedResource){
-                    Debug.Log("reducing resource");
+                    
                     playerResources[(clientId==1)?0:1] -= card.template.abilityValue;
                     clientRpcParams.Send = new ClientRpcSendParams
                     {
@@ -209,16 +216,24 @@ namespace DEVSOC2024
                         if(allHolders[row][column-1].template != null)
                         {
                             allHolders[row][column-1].power -= card.template.abilityValue;
-                            UpdateCardClientRpc(allHolders[row][column-1],row,column+1);
+                            UpdateCardClientRpc(allHolders[row][column-1],row,column-1);
+                            if(allHolders[row][column-1].power < 0)
+                            {
+                                DestroyClientRpc(row,column-1);
+                            }
                         }
                     }
-                    if(column<5)
+                    if(column<4)
                     {
 
                         if(allHolders[row][column+1].template != null && column<5)
                         {
                             allHolders[row][column+1].power -= card.template.abilityValue;
                             UpdateCardClientRpc(allHolders[row][column+1],row,column+1);
+                            if(allHolders[row][column+1].power < 0)
+                            {
+                                DestroyClientRpc(row,column+1);
+                            }
                         }
                     }
                     UpdateScoresValue();
@@ -243,14 +258,17 @@ namespace DEVSOC2024
             currstate = game;
             playCard = null;
             free = false;
+            abilityValue = 0;
             ui.removeCancel();
             ui.setEnd();
         }
 
         public void SetTarget()
         {
+            Debug.Log("Target");
             currstate = target;
             ui.removeEnd();
+            ui.SetPlay();
         }
 
         public void SetPlay()
@@ -288,6 +306,7 @@ namespace DEVSOC2024
         private void endGame()
         {
             endGameClientRPC(playerScores[0],playerScores[1]);
+            NetworkManager.Singleton.Shutdown();
         }
 
         #endregion
@@ -344,17 +363,28 @@ namespace DEVSOC2024
         [ServerRpc(RequireOwnership = false)]
         void RedPowerServerRpc(int abilityValue, int row, int column, ServerRpcParams serverRpcParams = default)
         {
+            Debug.Log("Target row: "+row);
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
             int newRow = (row + clientId * 2)%4;
             allHolders[newRow][column].power -= abilityValue;
+            UpdateCardClientRpc(allHolders[newRow][column],newRow,column);
+            if(allHolders[newRow][column].power < 0)
+            {
+                DestroyClientRpc(newRow,column);
+            }
+            UpdateScoresValue();
+            UpdateScoresClientRpc(playerScores[1],playerScores[0]);
         }
         
         [ServerRpc(RequireOwnership = false)]
-        void DestroyServerRpc(int abilityValue, int row, int column, ServerRpcParams serverRpcParams = default)
+        void DestroyServerRpc(int row, int column, ServerRpcParams serverRpcParams = default)
         {
             int clientId = (int)serverRpcParams.Receive.SenderClientId;
             int newRow = (row + clientId * 2)%4;
-            //allHolders[newRow][column];
+            allHolders[newRow][column] = new Card();
+            DestroyClientRpc(newRow,column);
+            UpdateScoresValue();
+            UpdateScoresClientRpc(playerScores[1],playerScores[0]);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -430,12 +460,14 @@ namespace DEVSOC2024
             if(currstate.currState != States.IdleState)
             {
                 SetIdle();
+                ui.SetTurn(false);
                 
             }
             else
             {
                 
                 SetGame();
+                ui.SetTurn(true);
                 
             }
         }
@@ -509,6 +541,7 @@ namespace DEVSOC2024
         [ClientRpc]
         void RedPowerAbilityClientRpc(Card card, ClientRpcParams clientRpcParams = default)
         {
+            abilityValue = card.template.abilityValue;
             currentAction = CurrentAction.RedPower;
             SetTarget();
         }
@@ -522,6 +555,16 @@ namespace DEVSOC2024
             }
             ui.UpdateCard(card,row,column);
             
+        }
+
+        [ClientRpc]
+        void DestroyClientRpc(int row,int column)
+        {
+            if(playerNumber == 1)
+            {
+                row = (row+2)%4;
+            }
+            ui.DestroyCard(row,column);
         }
 
 
